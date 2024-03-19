@@ -4,7 +4,7 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { Adapter } from 'next-auth/adapters';
 import db from '@/db/drizzle';
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET as string,
   adapter: DrizzleAdapter(db) as unknown as Adapter,
   providers: [
