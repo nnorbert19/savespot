@@ -7,6 +7,7 @@ import {
   integer,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
+import { sql } from 'drizzle-orm';
 
 export const users = pgTable('user', {
   id: text('id').notNull().primaryKey(),
@@ -14,6 +15,7 @@ export const users = pgTable('user', {
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
+  created: timestamp('created').default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const accounts = pgTable(
@@ -60,8 +62,12 @@ export const verificationTokens = pgTable(
   })
 );
 
-export const todo = pgTable('todo', {
-  id: integer('id').primaryKey(),
-  text: text('text').notNull(),
-  done: boolean('done').default(false).notNull(),
+export const bookmarks = pgTable('bookmarks', {
+  id: integer('id').notNull(),
+  userId: text('text').notNull().primaryKey(),
+  created: timestamp('created', { mode: 'date' }).notNull(),
+  bookmarkUrl: text('bookmarkUrl').notNull(),
+  siteImageUrl: text('siteImageUrl'),
+  description: text('description'),
+  tags: text('tags').array(),
 });

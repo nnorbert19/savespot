@@ -1,8 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await getServerSession(authOptions);
+
   return (
     <>
       <div className='w-full h-20 bg-gray-300 sticky top-0'>
@@ -13,7 +17,8 @@ const Navbar = () => {
                 <Link href='/about'>SaveSpot</Link>
               </li>
             </ul>
-            <Button>Sign in</Button>
+
+            {session ? session.user?.name : <Button>Sign in</Button>}
           </div>
         </div>
       </div>
