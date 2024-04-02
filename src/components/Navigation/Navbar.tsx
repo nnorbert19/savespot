@@ -2,9 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/server/auth';
+import UserInfoNav from './UserInfoNav';
 
-const Navbar = async () => {
+const Navbar: React.FC = async () => {
   const session = await getServerSession(authOptions);
 
   return (
@@ -14,11 +15,17 @@ const Navbar = async () => {
           <div className='flex justify-between items-center h-full'>
             <ul className='flex gap-x-6 '>
               <li>
-                <Link href='/about'>SaveSpot</Link>
+                <Link href={session ? '/dashboard' : '/'}>SaveSpot</Link>
               </li>
             </ul>
 
-            {session ? session.user?.name : <Button>Sign in</Button>}
+            {session ? (
+              <UserInfoNav user={session} />
+            ) : (
+              <Button>
+                <Link href='/login'>Sign in</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -14,10 +14,10 @@ export const middleware = async (request: NextRequest) => {
   const loggedIn = Object.keys(session).length > 0 ? true : false;
   const pathname = request.nextUrl.pathname;
 
-  if (pathname != '/admin/login' && !loggedIn) {
-    return NextResponse.redirect(
-      new URL('/admin/login', process.env.serverURL)
-    );
+  if (pathname == '/dashboard' && !loggedIn) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
   }
 };
 
