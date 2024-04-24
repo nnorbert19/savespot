@@ -6,16 +6,19 @@ import { asc, eq } from 'drizzle-orm';
 export const addBookmark = async (data: bookmarkType) => {
   await db.insert(bookmarks).values({
     id: data.id,
+    title: data.title,
+    favicon: data.favicon,
+    isPinned: data.isPinned,
     userId: data.userId,
-    created: data.created,
     bookmarkUrl: data.bookmarkUrl,
     siteImageUrl: data.siteImageUrl,
     description: data.description,
     tags: data.tags,
+    created: data.created,
   });
 };
 
-export const deleteTodo = async (id: number) => {
+export const deleteBookmark = async (id: string) => {
   await db.delete(bookmarks).where(eq(bookmarks.id, id));
 };
 
@@ -38,7 +41,7 @@ export const getData = async (userId: string) => {
   const data = await db
     .select()
     .from(bookmarks)
-    .orderBy(asc(bookmarks.id))
+    .orderBy(asc(bookmarks.created))
     .where(eq(bookmarks.userId, userId));
   return data;
 };

@@ -19,6 +19,11 @@ export const middleware = async (request: NextRequest) => {
     url.pathname = '/';
     return NextResponse.redirect(url);
   }
+  if ((pathname == '/login' || pathname == '/') && loggedIn) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
 };
 
 export const config = {

@@ -2,6 +2,7 @@
 import { signOut } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Smile, LogOut } from 'lucide-react';
+import Image from 'next/image';
 
 function UserInfoNav({ user }: any) {
   function openProfile() {
@@ -14,12 +15,15 @@ function UserInfoNav({ user }: any) {
       <Avatar className=' mx-2 hover:cursor-pointer' onClick={openProfile}>
         <AvatarImage
           referrerPolicy='no-referrer'
-          src={user.user?.image}
+          src={user.user.image}
           alt='avatar image'
         />
-        <AvatarFallback>
-          <Smile />
-        </AvatarFallback>
+
+        {
+          <AvatarFallback>
+            <Smile />
+          </AvatarFallback>
+        }
       </Avatar>
 
       <div

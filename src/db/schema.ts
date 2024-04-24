@@ -63,9 +63,14 @@ export const verificationTokens = pgTable(
 );
 
 export const bookmarks = pgTable('bookmarks', {
-  id: integer('id').notNull(),
-  userId: text('text').notNull().primaryKey(),
-  created: timestamp('created', { mode: 'date' }).notNull(),
+  id: text('id').notNull(),
+  userId: text('userId').notNull().primaryKey(),
+  created: timestamp('created', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  title: text('title'),
+  favicon: text('favicon'),
+  isPinned: boolean('isPinned').default(false),
   bookmarkUrl: text('bookmarkUrl').notNull(),
   siteImageUrl: text('siteImageUrl'),
   description: text('description'),
