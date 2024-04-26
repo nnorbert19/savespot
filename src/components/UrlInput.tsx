@@ -12,7 +12,6 @@ import { Session } from 'next-auth';
 // @ts-ignore
 import { toast } from 'sonner';
 import { addBookmark } from '@/db/actions/bookmarkActions';
-import { is } from 'drizzle-orm';
 
 const schema = z.object({
   link: z
@@ -69,7 +68,8 @@ function UrlInput({ session }: { session: Session }) {
       });
       setLoading(false);
     } catch (error) {
-      toast('Error fetching metadata:', error);
+      //error kezelése
+      toast('Error fetching metadata:' /*, error*/);
       return null;
     }
   }

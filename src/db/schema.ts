@@ -63,8 +63,8 @@ export const verificationTokens = pgTable(
 );
 
 export const bookmarks = pgTable('bookmarks', {
-  id: text('id').notNull(),
-  userId: text('userId').notNull().primaryKey(),
+  id: text('id').notNull().primaryKey(),
+  userId: text('userId').notNull(),
   created: timestamp('created', { mode: 'date' }).default(
     sql`CURRENT_TIMESTAMP`
   ),
