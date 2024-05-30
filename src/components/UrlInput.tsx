@@ -1,4 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+import { debounce, set } from 'lodash';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -6,12 +9,14 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { uuid } from 'uuidv4';
 import { Session } from 'next-auth';
 // @ts-ignore
 import { toast } from 'sonner';
 import { addBookmark } from '@/db/actions/bookmarkActions';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import Image from 'next/image';
 
 const schema = z.object({
   link: z
@@ -26,17 +31,70 @@ const schema = z.object({
 
 function UrlInput({ session }: { session: Session }) {
   const [loading, setLoading] = useState(false);
+  const [metadata, setMetadata] = useState<null | {
+    id: string;
+    title: any;
+    favicon: any;
+    userId: string;
+    bookmarkUrl: any;
+    siteImageUrl: any;
+    description: any;
+    isPinned: boolean;
+    tags: never[];
+    created: Date;
+  }>(null);
 
   const form = useForm<z.infer<typeof schema>>({
+    mode: 'onChange',
     resolver: zodResolver(schema),
     defaultValues: {
       link: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
+  const url = form.watch('link');
+
+  const debouncedFetchMetadata = useCallback(
+    debounce(async (url: string) => {
+      try {
+        schema.parse({ link: url });
+        console.log('debounced');
+        fetchMetadata(url);
+      } catch (error) {
+        return;
+      }
+    }, 600),
+    []
+  );
+
+  useEffect(() => {
+    if (url) {
+      debouncedFetchMetadata(url);
+    }
+  }, [url, debouncedFetchMetadata]);
+
+  /*useEffect(() => {
+    try {
+      schema.parse({ link: url });
+      debouncedFetchMetadata();
+    } catch (error) {
+      return;
+    }
+  }, [url]);*/
+
+  function onSubmit() {
     setLoading(true);
-    fetchMetadata(values.link);
+    AddToDatabase();
+  }
+
+  function AddToDatabase() {
+    if (metadata) {
+      setLoading(true);
+      addBookmark(metadata).then(() => {
+        toast('Bookmark added!');
+        setLoading(false);
+      });
+    }
   }
 
   async function fetchMetadata(url: string) {
@@ -47,7 +105,6 @@ function UrlInput({ session }: { session: Session }) {
 
       if (response.data.title == '404 - Not Found') {
         toast('Site not found!');
-        setLoading(false);
         return;
       }
       console.log(response.data);
@@ -63,45 +120,58 @@ function UrlInput({ session }: { session: Session }) {
         tags: [],
         created: new Date(),
       };
-      addBookmark(data).then(() => {
-        toast('Bookmark added!');
-      });
-      setLoading(false);
+      setMetadata(data);
     } catch (error) {
-      //error kezelése
       toast('Error fetching metadata:' /*, error*/);
       return null;
     }
   }
 
   return (
-    <div className='w-96'>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='w-full space-x-4 flex flex-row items-start justify-center '
-        >
-          <FormField
-            control={form.control}
-            name='link'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    className='w-100 shadow-lg'
-                    placeholder='https://'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type='submit' className='shadow-lg' disabled={loading}>
-            Add
-          </Button>
-        </form>
-      </Form>
+    <div>
+      <div className='w-96'>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='w-full space-x-4 flex flex-row items-start justify-center '
+          >
+            <FormField
+              control={form.control}
+              name='link'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      className='w-100 shadow-lg'
+                      placeholder='https://'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type='submit'
+              className='shadow-lg'
+              disabled={loading && !!metadata}
+            >
+              Add
+            </Button>
+          </form>
+        </Form>
+      </div>
+      {metadata && (
+        <Card className='w-96 relative top-4'>
+          <CardHeader>
+            <img src={metadata.siteImageUrl} alt='' />
+            <CardTitle>{metadata.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{metadata.description}</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
