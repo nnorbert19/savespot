@@ -27,12 +27,15 @@ export const editBookmark = async (data: bookmarkType) => {
     .update(bookmarks)
     .set({
       id: data.id,
+      title: data.title,
+      favicon: data.favicon,
+      isPinned: data.isPinned,
       userId: data.userId,
-      created: data.created,
       bookmarkUrl: data.bookmarkUrl,
       siteImageUrl: data.siteImageUrl,
       description: data.description,
       tags: data.tags,
+      created: data.created,
     })
     .where(eq(bookmarks.id, data.id));
 };

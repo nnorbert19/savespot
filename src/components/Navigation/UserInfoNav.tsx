@@ -2,7 +2,6 @@
 import { signOut } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Smile, LogOut } from 'lucide-react';
-import Image from 'next/image';
 
 function UserInfoNav({ user }: any) {
   function openProfile() {

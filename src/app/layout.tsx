@@ -23,9 +23,7 @@ export default function RootLayout({
           <div>
             <Navbar />
           </div>
-          <main className='flex min-w-[100vw] flex-col items-center'>
-            {children}
-          </main>
+          <main className='flex flex-col items-center'>{children}</main>
           <Toaster />
         </div>
       </body>

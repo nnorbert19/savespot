@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import { debounce, set } from 'lodash';
+import { debounce } from 'lodash';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -9,14 +9,15 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { uuid } from 'uuidv4';
 import { Session } from 'next-auth';
 // @ts-ignore
 import { toast } from 'sonner';
 import { addBookmark } from '@/db/actions/bookmarkActions';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import Image from 'next/image';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { useRouter } from 'next/navigation';
 
 const schema = z.object({
   link: z
@@ -30,6 +31,7 @@ const schema = z.object({
 });
 
 function UrlInput({ session }: { session: Session }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [metadata, setMetadata] = useState<null | {
     id: string;
@@ -51,7 +53,6 @@ function UrlInput({ session }: { session: Session }) {
       link: '',
     },
   });
-
   const url = form.watch('link');
 
   const debouncedFetchMetadata = useCallback(
@@ -61,6 +62,7 @@ function UrlInput({ session }: { session: Session }) {
         console.log('debounced');
         fetchMetadata(url);
       } catch (error) {
+        setMetadata(null);
         return;
       }
     }, 600),
@@ -73,15 +75,6 @@ function UrlInput({ session }: { session: Session }) {
     }
   }, [url, debouncedFetchMetadata]);
 
-  /*useEffect(() => {
-    try {
-      schema.parse({ link: url });
-      debouncedFetchMetadata();
-    } catch (error) {
-      return;
-    }
-  }, [url]);*/
-
   function onSubmit() {
     setLoading(true);
     AddToDatabase();
@@ -91,8 +84,11 @@ function UrlInput({ session }: { session: Session }) {
     if (metadata) {
       setLoading(true);
       addBookmark(metadata).then(() => {
+        form.reset();
+        setMetadata(null);
         toast('Bookmark added!');
         setLoading(false);
+        router.refresh();
       });
     }
   }
@@ -107,7 +103,6 @@ function UrlInput({ session }: { session: Session }) {
         toast('Site not found!');
         return;
       }
-      console.log(response.data);
       const data = {
         id: uuid(),
         title: response.data.title,
@@ -160,18 +155,24 @@ function UrlInput({ session }: { session: Session }) {
             </Button>
           </form>
         </Form>
+
+        {metadata && (
+          <Popover open={!!metadata}>
+            <PopoverTrigger />
+            <PopoverContent className='w-100 '>
+              <Card className='w-96 top-4'>
+                <CardHeader>
+                  <img src={metadata.siteImageUrl} alt='' />
+                  <CardTitle>{metadata.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>{metadata.description}</p>
+                </CardContent>
+              </Card>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
-      {metadata && (
-        <Card className='w-96 relative top-4'>
-          <CardHeader>
-            <img src={metadata.siteImageUrl} alt='' />
-            <CardTitle>{metadata.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{metadata.description}</p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
