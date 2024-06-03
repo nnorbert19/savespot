@@ -18,6 +18,7 @@ import { addBookmark } from '@/db/actions/bookmarkActions';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { useRouter } from 'next/navigation';
+import { LoaderCircle, X } from 'lucide-react';
 
 const schema = z.object({
   link: z
@@ -59,9 +60,9 @@ function UrlInput({ session }: { session: Session }) {
     debounce(async (url: string) => {
       try {
         schema.parse({ link: url });
-        console.log('debounced');
         fetchMetadata(url);
       } catch (error) {
+        setLoading(false);
         setMetadata(null);
         return;
       }
@@ -71,7 +72,10 @@ function UrlInput({ session }: { session: Session }) {
 
   useEffect(() => {
     if (url) {
+      !loading && setLoading(true);
       debouncedFetchMetadata(url);
+    } else {
+      setMetadata(null);
     }
   }, [url, debouncedFetchMetadata]);
 
@@ -101,6 +105,7 @@ function UrlInput({ session }: { session: Session }) {
 
       if (response.data.title == '404 - Not Found') {
         toast('Site not found!');
+        setLoading(false);
         return;
       }
       const data = {
@@ -116,7 +121,9 @@ function UrlInput({ session }: { session: Session }) {
         created: new Date(),
       };
       setMetadata(data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       toast('Error fetching metadata:' /*, error*/);
       return null;
     }
@@ -124,7 +131,7 @@ function UrlInput({ session }: { session: Session }) {
 
   return (
     <div>
-      <div className='w-96'>
+      <div className='w-96 flex flex-col items-center'>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -149,21 +156,34 @@ function UrlInput({ session }: { session: Session }) {
             <Button
               type='submit'
               className='shadow-lg'
-              disabled={loading && !!metadata}
+              disabled={loading || !metadata}
             >
-              Add
+              {loading ? (
+                <LoaderCircle
+                  size={24}
+                  strokeWidth={3}
+                  className='animate-spin'
+                />
+              ) : (
+                'Add'
+              )}
             </Button>
           </form>
         </Form>
-
         {metadata && (
           <Popover open={!!metadata}>
             <PopoverTrigger />
-            <PopoverContent className='w-100 '>
-              <Card className='w-96 top-4'>
+            <PopoverContent className='w-100 bg-ring shadow-2xl z-10'>
+              <Card className='w-96  top-4'>
                 <CardHeader>
+                  <div className='flex flex-row justify-between'>
+                    <CardTitle>{metadata.title}</CardTitle>
+                    <X
+                      className='min-w-[20px] max-w-[20px]'
+                      onClick={() => form.reset()}
+                    />
+                  </div>
                   <img src={metadata.siteImageUrl} alt='' />
-                  <CardTitle>{metadata.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p>{metadata.description}</p>

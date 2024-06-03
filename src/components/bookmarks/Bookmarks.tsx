@@ -6,12 +6,11 @@ import Bookmark from './Bookmark';
 
 export default async function Bookmarks({ session }: { session: Session }) {
   const Bookmarks = await getData(session.user?.id);
-  console.log(Bookmarks);
   return (
     <div>
       <Suspense fallback={<BookmarkSkeleton />}>
         <div className='flex justify-center flex-wrap'>
-          {Bookmarks?.map((data) => (
+          {Bookmarks.map((data) => (
             <Bookmark {...data} key={data.id} />
           ))}
         </div>

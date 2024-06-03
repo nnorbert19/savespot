@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 function Bookmark(props: any) {
   return (
-    <Card className='w-96 relative m-4'>
+    <Card className='w-96 relative mt-4 mx-2'>
       <CardHeader>
         {props?.siteImageUrl && (
           <img className='max-h-[190px]' src={props.siteImageUrl} alt='' />
