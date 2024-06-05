@@ -10,3 +10,5 @@ export type bookmarkType = {
   description: string;
   tags: string[];
 };
+
+export type bookmarkArrayType = bookmarkType[];

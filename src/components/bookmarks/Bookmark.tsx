@@ -1,13 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import wave from '../../../public/wave.svg';
+import Image from 'next/image';
 
 function Bookmark(props: any) {
   return (
-    <Card className='w-96 relative mt-4 mx-2'>
+    <Card className='w-96 relative mt-4 mx-2 z-0'>
       <CardHeader>
-        {props?.siteImageUrl && (
-          <img className='max-h-[190px]' src={props.siteImageUrl} alt='' />
+        {props?.siteImageUrl ? (
+          <img
+            className='h-[190px] rounded object-cover'
+            src={props.siteImageUrl}
+            alt={`Image of ${props.title}`}
+          />
+        ) : (
+          <Image
+            height={190}
+            width={366}
+            className='invert dark:invert-0 min-h-[190px] w-[366px] rounded object-cover'
+            src={wave}
+            alt={''}
+          />
         )}
         <CardTitle>{props.title}</CardTitle>
         <Link
@@ -21,7 +35,7 @@ function Bookmark(props: any) {
               alt={props.title + ' favicon.'}
             />
           )}
-          {props.bookmarkUrl}
+          <p className='hover:underline'>{props.bookmarkUrl}</p>
         </Link>
       </CardHeader>
       <CardContent className='h-32'>

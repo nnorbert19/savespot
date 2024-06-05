@@ -10,10 +10,10 @@ const Navbar: React.FC = async () => {
 
   return (
     <>
-      <div className='w-full h-20 bg-secondary/95 backdrop-blur-xl fixed z-[60] top-0 py-2'>
-        <div className='container mx-auto px-4 h-full'>
-          <div className='flex justify-between items-center h-full'>
-            <ul className='flex gap-x-6 '>
+      <div className='w-full h-20 bg-secondary fixed z-[60] top-0 py-2'>
+        <div className='max-w-7xl mx-auto px-4 h-full'>
+          <div className='flex justify-between items-center h-full px-2'>
+            <ul>
               <li>
                 <Link href={session ? '/dashboard' : '/'}>SaveSpot</Link>
               </li>
