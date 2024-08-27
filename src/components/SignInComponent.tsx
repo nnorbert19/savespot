@@ -19,12 +19,11 @@ function SignInComponent() {
   }
 
   return (
-    <Card className='w-[350px]'>
+    <Card className='w-[350px] mt-40'>
       <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
+        <CardTitle>Sign in</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='pt-4'>
         <form>
           <div className='grid w-full items-center gap-4'>
             <div className='flex flex-col space-y-1.5'>

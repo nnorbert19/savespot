@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { Session } from 'next-auth';
 import { toast } from 'sonner';
 import { addBookmark } from '@/db/actions/bookmarkActions';
@@ -113,7 +113,7 @@ function UrlInput({ session }: { session: Session }) {
         return;
       }
       const data = {
-        id: uuid(),
+        id: v4(),
         title: response.data.title,
         favicon: response.data.favicon,
         userId: session.user?.id ?? '',
@@ -145,7 +145,7 @@ function UrlInput({ session }: { session: Session }) {
 
   return (
     <>
-      <div>
+      <div className={`${!!metadata ?"blur-background":""}`}>
         <div ref={reference} className='w-96 flex flex-col items-center pb-4'>
           <Form {...form}>
             <form
@@ -190,9 +190,9 @@ function UrlInput({ session }: { session: Session }) {
             </form>
           </Form>
           {metadata && (
-            <Popover open={!!metadata}>
+            <Popover open={!!metadata} >
               <PopoverTrigger />
-              <PopoverContent className='w-100 bg-ring shadow-2xl z-10'>
+              <PopoverContent className='w-100 bg-secondary p-2 shadow-2xl z-10'>
                 <Card className='w-96  top-4'>
                   <CardHeader>
                     <div className='flex flex-row justify-between'>

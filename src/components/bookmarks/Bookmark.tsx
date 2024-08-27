@@ -24,8 +24,9 @@ function Bookmark(props: any) {
           />
         )}
         <CardTitle>{props.title}</CardTitle>
-        <Link
+        <a
           href={props.bookmarkUrl}
+          target="_blank"
           className='italic text-xs flex flex-row items-center'
         >
           {props.favicon && (
@@ -36,7 +37,7 @@ function Bookmark(props: any) {
             />
           )}
           <p className='hover:underline'>{props.bookmarkUrl}</p>
-        </Link>
+        </a>
       </CardHeader>
       <CardContent className='h-32'>
         <p className='line-clamp-5'>{props.description}</p>

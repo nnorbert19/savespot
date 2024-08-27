@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
 import UserInfoNav from './UserInfoNav';
+import { ModeToggle } from '../ui/lightModeButton';
 
 const Navbar: React.FC = async () => {
   const session = await getServerSession(authOptions);
@@ -22,9 +23,14 @@ const Navbar: React.FC = async () => {
             {session ? (
               <UserInfoNav user={session} />
             ) : (
-              <Button>
-                <Link href='/login'>Sign in</Link>
-              </Button>
+              <>
+                <div className='flex items-center gap-2'>
+                  <ModeToggle />
+                <Button>
+                  <Link href='/login'>Sign in</Link>
+                </Button>
+                </div>
+              </>
             )}
           </div>
         </div>

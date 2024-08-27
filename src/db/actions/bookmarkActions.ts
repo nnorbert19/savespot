@@ -1,7 +1,7 @@
 import db from '@/db/drizzle';
 import { bookmarks } from '@/db/schema';
 import { bookmarkType } from '@/types/bookmarkType';
-import { asc, eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export const addBookmark = async (data: bookmarkType) => {
   await db.insert(bookmarks).values({
@@ -44,7 +44,7 @@ export const getData = async (userId: string) => {
   const data = await db
     .select()
     .from(bookmarks)
-    .orderBy(asc(bookmarks.created))
+    .orderBy(desc(bookmarks.created))
     .where(eq(bookmarks.userId, userId));
   return data;
 };
