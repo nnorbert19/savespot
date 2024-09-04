@@ -20,18 +20,21 @@ import { useRouter } from 'next/navigation';
 import { LoaderCircle, Plus, X } from 'lucide-react';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
-const schema = z.object({
-  link: z
-    .string({ required_error: 'Please insert a URL!' })
-    .startsWith('https://', {
-      message: `Please include 'https://' in the URL!`,
-    })
-    .url({
-      message: 'Must be a Link!',
-    }),
-});
+function UrlInput({ session, urls }: { session: Session; urls: string[] }) {
+  const schema = z.object({
+    link: z
+      .string()
+      .startsWith('https://', {
+        message: `Please include 'https://' in the URL!`,
+      })
+      .url({
+        message: 'Must be a Link!',
+      })
+      .refine((url) => !urls.includes(url), {
+        message: 'This URL is already Sa',
+      }),
+  });
 
-function UrlInput({ session }: { session: Session }) {
   const { reference, isIntersecting } = useIntersectionObserver({
     threshold: 0.1,
   });
@@ -128,7 +131,7 @@ function UrlInput({ session }: { session: Session }) {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      toast('Error fetching metadata:' /*, error*/);
+      toast.error('Error fetching metadata, please try again later!');
       return null;
     }
   }
@@ -145,7 +148,7 @@ function UrlInput({ session }: { session: Session }) {
 
   return (
     <>
-      <div className={`${!!metadata ?"blur-background":""}`}>
+      <div className={`${!!metadata ? 'blur-background' : ''}`}>
         <div ref={reference} className='w-96 flex flex-col items-center pb-4'>
           <Form {...form}>
             <form
@@ -190,7 +193,7 @@ function UrlInput({ session }: { session: Session }) {
             </form>
           </Form>
           {metadata && (
-            <Popover open={!!metadata} >
+            <Popover open={!!metadata}>
               <PopoverTrigger />
               <PopoverContent className='w-100 bg-secondary p-2 shadow-2xl z-10'>
                 <Card className='w-96  top-4'>
@@ -198,7 +201,7 @@ function UrlInput({ session }: { session: Session }) {
                     <div className='flex flex-row justify-between'>
                       <CardTitle>{metadata.title}</CardTitle>
                       <X
-                        className='min-w-[20px] max-w-[20px]'
+                        className='min-w-[20px] max-w-[20px] hover:cursor-pointer'
                         onClick={() => form.reset()}
                       />
                     </div>

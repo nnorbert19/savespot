@@ -14,7 +14,10 @@ async function page() {
     <div className='pt-24'>
       {session && (
         <div className='flex flex-col items-center'>
-          <UrlInput session={session} />
+          <UrlInput
+            session={session}
+            urls={bookmarksData.map((bookmark) => bookmark.bookmarkUrl)}
+          />
           <Suspense
             fallback={Array.from({ length: 5 }).map((_, index) => (
               <BookmarkSkeleton key={index} />

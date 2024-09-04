@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import wave from '../../../public/wave.svg';
 import Image from 'next/image';
+import Options from './Options';
 
 function Bookmark(props: any) {
   return (
@@ -23,10 +23,15 @@ function Bookmark(props: any) {
             alt={''}
           />
         )}
-        <CardTitle>{props.title}</CardTitle>
+        <CardTitle className='flex flex-row flex-shrink-0  justify-between items-center'>
+          {props.title}
+          <div>
+            <Options id={props.id} url={props.bookmarkUrl} />
+          </div>
+        </CardTitle>
         <a
           href={props.bookmarkUrl}
-          target="_blank"
+          target='_blank'
           className='italic text-xs flex flex-row items-center'
         >
           {props.favicon && (

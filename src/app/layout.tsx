@@ -32,7 +32,7 @@ export default function RootLayout({
             <main className='flex flex-col items-center max-w-7xl'>
               {children}
             </main>
-            <Toaster />
+            <Toaster richColors />
             <Footer />
           </div>
         </ThemeProvider>

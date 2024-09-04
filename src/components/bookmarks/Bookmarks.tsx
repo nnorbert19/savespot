@@ -1,7 +1,3 @@
-import { getData } from '@/db/actions/bookmarkActions';
-import { Session } from 'next-auth';
-import { Suspense } from 'react';
-import BookmarkSkeleton from './BookmarkSkeleton';
 import Bookmark from './Bookmark';
 import { bookmarkArrayType } from '@/types/bookmarkType';
 
@@ -12,11 +8,10 @@ export default async function Bookmarks({
 }) {
   return (
     <div>
+      <div className='flex justify-center flex-wrap container mb-8'>tagek</div>
       <div className='flex justify-center flex-wrap container mb-8'>
-        {bookmarksData.map((data) => (
-          <>
-            <Bookmark {...data} key={data.id} />
-          </>
+        {bookmarksData.map((data, index) => (
+          <Bookmark {...data} key={index} />
         ))}
       </div>
     </div>
