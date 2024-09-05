@@ -10,8 +10,12 @@ import NewTab from '../icons/NewTab';
 import Copy from '../icons/Copy';
 import Refresh from '../icons/Refresh';
 import Trash from '../icons/Trash';
+import { deleteBookmark, editBookmark } from '@/db/actions/bookmarkActions';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 function Options(props: bookmarkType) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   function copyUrl() {
@@ -26,14 +30,69 @@ function Options(props: bookmarkType) {
   }
 
   function pinBookmark() {
+    const newBookmark = { ...props, isPinned: !props.isPinned };
+    editBookmark(newBookmark)
+      .then(() => {
+        if (newBookmark.isPinned) {
+          toast.success('Bookmark pinned');
+        } else {
+          toast.success('Bookmark unpinned');
+        }
+        router.refresh();
+      })
+      .catch(() => {
+        if (newBookmark.isPinned) {
+          toast.error('Failed to pin bookmark');
+        } else {
+          toast.error('Failed to unpin bookmark');
+        }
+      });
     setIsOpen(false);
   }
 
-  function deleteBookmark() {
+  function deleteBookmarkFn() {
+    deleteBookmark(props.id)
+      .then(() => {
+        toast.success('Bookmark deleted');
+        router.refresh();
+      })
+      .catch(() => {
+        toast.error('Failed to delete bookmark');
+      });
     setIsOpen(false);
   }
 
-  function refreshBookmark() {
+  async function refreshBookmark() {
+    toast.promise(
+      axios(
+        `https://jsonlink.io/api/extract?url=${props.bookmarkUrl}&api_key=${process.env.NEXT_PUBLIC_JSONLINK}`
+      ).then((response) => {
+        const data = {
+          id: props.id,
+          title: response.data.title,
+          favicon: response.data.favicon,
+          userId: props.userId,
+          bookmarkUrl: response.data.url,
+          siteImageUrl: response.data.images[0],
+          description: response.data.description,
+          isPinned: props.isPinned,
+          tags: props.tags,
+          created: props.created,
+        };
+        editBookmark(data)
+          .then(() => {
+            return 'success';
+          })
+          .catch(() => {
+            return 'error';
+          });
+      }),
+      {
+        loading: 'Fetching metadata...',
+        success: 'Metadata refreshed successfully!',
+        error: 'Failed to fetch metadata. Please try again.',
+      }
+    );
     setIsOpen(false);
   }
 
@@ -100,7 +159,7 @@ function Options(props: bookmarkType) {
         <Button
           variant={'ghost'}
           className='flex flex-row justify-start px-1 text-red-500 hover:text-red-500'
-          onClick={() => deleteBookmark()}
+          onClick={() => deleteBookmarkFn()}
         >
           <Trash />
           <p className='ml-2'>Delete</p>

@@ -94,13 +94,17 @@ function UrlInput({ session, urls }: { session: Session; urls: string[] }) {
   function AddToDatabase() {
     if (metadata) {
       setLoading(true);
-      addBookmark(metadata).then(() => {
-        form.reset();
-        setMetadata(null);
-        toast('Bookmark added!');
-        setLoading(false);
-        router.refresh();
-      });
+      addBookmark(metadata)
+        .then(() => {
+          form.reset();
+          setMetadata(null);
+          toast.success('Bookmark added!');
+          setLoading(false);
+          router.refresh();
+        })
+        .catch(() => {
+          toast.error('Failed to add bookmark!');
+        });
     }
   }
 
@@ -111,7 +115,7 @@ function UrlInput({ session, urls }: { session: Session; urls: string[] }) {
       );
 
       if (response.data.title == '404 - Not Found') {
-        toast('Site not found!');
+        toast.error('Site not found!');
         setLoading(false);
         return;
       }
@@ -220,7 +224,7 @@ function UrlInput({ session, urls }: { session: Session; urls: string[] }) {
       <Button
         onClick={FocusInput}
         size={'bigIcon'}
-        className={`fixed bottom-4 right-10 xl:right-24 z-10 p-4 rounded-full transition-all duration-500 ease-in-out transform ${
+        className={`fixed bottom-10 right-10 xl:right-24 z-10 p-4 rounded-full transition-all duration-500 ease-in-out transform ${
           isIntersecting
             ? 'opacity-0 translate-y-32 pointer-events-none'
             : 'opacity-100 translate-y-0'

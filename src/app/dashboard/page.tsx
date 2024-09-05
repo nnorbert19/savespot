@@ -5,10 +5,18 @@ import Bookmarks from '@/components/bookmarks/Bookmarks';
 import { getData } from '@/db/actions/bookmarkActions';
 import { Suspense } from 'react';
 import BookmarkSkeleton from '@/components/bookmarks/BookmarkSkeleton';
+import Tag from '@/components/ui/tag';
 
-async function page() {
+async function page({ searchParams, ...props }: any) {
+  console.log(searchParams?.tag);
   const session = await getServerSession(authOptions);
   const bookmarksData = await getData(session?.user?.id || '');
+  const filteredBookmarks = searchParams?.tag
+    ? bookmarksData.filter(
+        (bookmark) =>
+          bookmark?.tags && bookmark.tags.includes(searchParams?.tag)
+      )
+    : bookmarksData;
 
   return (
     <div className='pt-24'>
@@ -19,7 +27,8 @@ async function page() {
             urls={bookmarksData.map((bookmark) => bookmark.bookmarkUrl)}
           />
           <div className='flex justify-center flex-wrap container mb-8'>
-            tagek
+            <Tag text='valami' index={1} number={21} />
+            <Tag text='valam' index={2} />
           </div>
 
           <Suspense
@@ -30,7 +39,7 @@ async function page() {
             {bookmarksData && (
               <Bookmarks
                 // @ts-ignore
-                bookmarksData={bookmarksData}
+                bookmarksData={filteredBookmarks}
               />
             )}
           </Suspense>
