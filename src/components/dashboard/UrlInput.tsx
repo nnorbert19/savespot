@@ -6,7 +6,13 @@ import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -14,8 +20,8 @@ import { v4 } from 'uuid';
 import { Session } from 'next-auth';
 import { toast } from 'sonner';
 import { addBookmark } from '@/db/actions/bookmarkActions';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useRouter } from 'next/navigation';
 import { LoaderCircle, Plus, X } from 'lucide-react';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';

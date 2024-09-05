@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Options from './Options';
 import { bookmarkType } from '@/types/bookmarkType';
 import Pin from '../icons/Pin';
+import Tags from './Tags';
 
 function Bookmark(props: bookmarkType) {
   return (
@@ -51,6 +52,7 @@ function Bookmark(props: bookmarkType) {
           )}
           <p className='hover:underline'>{props.bookmarkUrl}</p>
         </a>
+        {props.tags && <Tags {...props} />}
       </CardHeader>
       <CardContent className='h-32'>
         <p className='line-clamp-5'>{props.description}</p>

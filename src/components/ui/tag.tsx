@@ -1,21 +1,28 @@
+'use client';
 import Link from 'next/link';
 import { Button } from './button';
+import { useRouter } from 'next/navigation';
 
 function Tag({
   text,
-  index,
   number,
+  children,
 }: {
   text: string;
-  index: number;
   number?: number;
+  children?: any;
 }) {
+  const router = useRouter();
+
   return (
-    <Link key={index} href={`/?tag=${encodeURIComponent(text)}`} passHref>
-      <Button variant={'ghost'} size={'tag'}>
-        {text} {number && `(${number})`}
-      </Button>
-    </Link>
+    <Button
+      variant={'ghost'}
+      size={'tag'}
+      onClick={() => router.push(`/?tag=${encodeURIComponent(text)}`)}
+    >
+      {text} {number && `(${number})`}
+      {children && children}
+    </Button>
   );
 }
 

@@ -1,14 +1,14 @@
 import { getServerSession } from 'next-auth';
-import UrlInput from '@/components/UrlInput';
+import UrlInput from '@/components/dashboard/UrlInput';
 import { authOptions } from '@/server/auth';
 import Bookmarks from '@/components/bookmarks/Bookmarks';
 import { getData } from '@/db/actions/bookmarkActions';
 import { Suspense } from 'react';
 import BookmarkSkeleton from '@/components/bookmarks/BookmarkSkeleton';
 import Tag from '@/components/ui/tag';
+import { bookmarkType } from '@/types/bookmarkType';
 
-async function page({ searchParams, ...props }: any) {
-  console.log(searchParams?.tag);
+async function page({ searchParams }: any) {
   const session = await getServerSession(authOptions);
   const bookmarksData = await getData(session?.user?.id || '');
   const filteredBookmarks = searchParams?.tag
@@ -17,6 +17,23 @@ async function page({ searchParams, ...props }: any) {
           bookmark?.tags && bookmark.tags.includes(searchParams?.tag)
       )
     : bookmarksData;
+
+  const tags = individualTags(bookmarksData as bookmarkType[]);
+
+  function individualTags(bookmarks: bookmarkType[]) {
+    const tagCountMap: Record<string, number> = {};
+
+    bookmarks.forEach((bookmark) => {
+      bookmark.tags.forEach((tag) => {
+        tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+      });
+    });
+
+    return Object.entries(tagCountMap).map(([tag, count]) => ({
+      tag,
+      count,
+    }));
+  }
 
   return (
     <div className='pt-24'>
@@ -27,8 +44,10 @@ async function page({ searchParams, ...props }: any) {
             urls={bookmarksData.map((bookmark) => bookmark.bookmarkUrl)}
           />
           <div className='flex justify-center flex-wrap container mb-8'>
-            <Tag text='valami' index={1} number={21} />
-            <Tag text='valam' index={2} />
+            {tags &&
+              tags.map((tag, index) => (
+                <Tag text={tag.tag} number={tag.count} key={index} />
+              ))}
           </div>
 
           <Suspense
