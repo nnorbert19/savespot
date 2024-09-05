@@ -18,6 +18,10 @@ async function page() {
             session={session}
             urls={bookmarksData.map((bookmark) => bookmark.bookmarkUrl)}
           />
+          <div className='flex justify-center flex-wrap container mb-8'>
+            tagek
+          </div>
+
           <Suspense
             fallback={Array.from({ length: 5 }).map((_, index) => (
               <BookmarkSkeleton key={index} />

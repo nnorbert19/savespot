@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import wave from '../../../public/wave.svg';
 import Image from 'next/image';
 import Options from './Options';
+import { bookmarkType } from '@/types/bookmarkType';
+import Pin from '../icons/Pin';
 
-function Bookmark(props: any) {
+function Bookmark(props: bookmarkType) {
   return (
     <Card className='w-96 relative mt-4 mx-2 z-0'>
       <CardHeader>
@@ -23,10 +25,16 @@ function Bookmark(props: any) {
             alt={''}
           />
         )}
+        {props.isPinned && (
+          <div className='absolute top-2 right-3 h-6 w-6 bg-secondary rounded-full flex justify-center items-center'>
+            <Pin />
+          </div>
+        )}
+
         <CardTitle className='flex flex-row flex-shrink-0  justify-between items-center'>
           {props.title}
           <div>
-            <Options id={props.id} url={props.bookmarkUrl} />
+            <Options {...props} />
           </div>
         </CardTitle>
         <a
