@@ -36,7 +36,7 @@ async function page({ searchParams }: any) {
   }
 
   return (
-    <div className='pt-24'>
+    <div>
       {session && (
         <div className='flex flex-col items-center'>
           <UrlInput

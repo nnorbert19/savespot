@@ -29,7 +29,7 @@ export default function RootLayout({
         >
           <div className='min-h-screen flex flex-col items-center justify-between'>
             <Navbar />
-            <main className='flex flex-col items-center max-w-7xl'>
+            <main className='flex flex-col items-center max-w-7xl pt-24'>
               {children}
             </main>
             <Toaster richColors />
